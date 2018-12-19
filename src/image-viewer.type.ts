@@ -202,6 +202,10 @@ export class Props {
   public onChange?: (index?: number) => void = () => {
     //
   };
+
+  public onShowOrigin?: (index?: number) => void = () => {
+    //
+  };
 }
 
 export class State {

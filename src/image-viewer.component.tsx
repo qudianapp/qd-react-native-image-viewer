@@ -608,7 +608,11 @@ export default class ImageViewer extends React.Component<Props, State> {
               <View style={this.styles.watchOrigin}>
                 <TouchableOpacity 
                   style={this.styles.watchOriginTouchable}
-                  onPress={this.props!.onShowOrigin}
+                  onPress={() => {
+                    if (this.props.onShowOrigin) {
+                      this.props.onShowOrigin(this.state.currentShowIndex)
+                    }
+                  }}
                 >
                   <Text style={this.styles.watchOriginText}>查看原图</Text>
                 </TouchableOpacity>
