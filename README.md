@@ -17,24 +17,12 @@
 ### Installation
 
 ```bash
-npm i react-native-image-zoom-viewer --save
+npm i @qudian_mobile/qd-react-native-image-viewer --save
 ```
 
 ### Basic Usage
 
 - Install create-react-native-app first
-
-```bash
-$ npm install -g create-react-native-app
-```
-
-- Initialization of a react-native project
-
-```bash
-$ create-react-native-app AwesomeProject
-```
-
-- Then, edit `AwesomeProject/App.js`, like this:
 
 ```typescript
 import { Modal } from 'react-native';
@@ -103,28 +91,4 @@ export default class App extends React.Component {
 | doubleClickInterval    | number                                                                                 | no       | Double click interval.                                                                                                                                                                                                               |                                                           |
 | pageAnimateTime        | number                                                                                 | no       | Set the animation time for page flipping.                                                                                                                                                                                            | `100`                                                     |
 | enablePreload          | boolean                                                                                | no       | Preload the next image                                                                                                                                                                                                               | `false`                                                   |
-
-## Development pattern
-
-### Step 1, run TS listener
-
-After clone this repo, then:
-
-```bash
-npm install
-npm start
-```
-
-### Step 2, run demo
-
-```bash
-cd demo
-npm install
-npm start
-```
-
-Then, scan the QR, use your [expo app](https://expo.io./).
-
-### Dependence
-
-Depend on `react-native-image-pan-zoom`: https://github.com/ascoders/react-native-image-zoom
+| onShowOrigin               | function<br><br>`(index?: number => void`                                              | no       | When the image changed                                                                                                                                                                                                               | `() => {}`                                                |

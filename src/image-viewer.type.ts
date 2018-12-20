@@ -233,11 +233,6 @@ export class State {
    * 是否出现功能菜单
    */
   public isShowMenu?: boolean = false;
-
-  /**
-   * 是否显示原图
-   */
-  public showOrigin?: boolean = false;
 }
 
 export interface IImageInfo {
@@ -255,12 +250,11 @@ export interface IImageInfo {
    */
   sizeKb?: number;
   /**
-   * 原图字节大小(kb为单位)
-   * 如果设置了这个字段,并且有原图url,则显示查看原图按钮
+   * 显示查看原图按钮
    */
   originSizeKb?: number;
   /**
-   * 原图url地址
+   * 原图url地址,显示查看原图按钮
    */
   originUrl?: string;
   /**
@@ -275,6 +269,10 @@ export interface IImageInfo {
    * 初始是否不超高 TODO:
    */
   freeWidth?: boolean;
+  /**
+   * 是否直接显示原图
+   */
+  originOnly?: boolean;
 }
 
 export interface IImageSize {
@@ -282,4 +280,6 @@ export interface IImageSize {
   height: number;
   // 图片加载状态
   status: 'loading' | 'success' | 'fail';
+  // 是否加载的原图
+  isOrigin: boolean;
 }

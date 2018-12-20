@@ -74,6 +74,10 @@ export default class ImageViewer extends React.Component<Props, State> {
     }
   }
 
+  // public componentWillUpdate(nextProps: any, nextState: any) {
+  //   console.warn(nextProps, nextState)
+  // }
+
   /**
    * props 有变化时执行
    */
@@ -90,7 +94,8 @@ export default class ImageViewer extends React.Component<Props, State> {
       imageSizes.push({
         width: imageUrl.width || 0,
         height: imageUrl.height || 0,
-        status: 'loading'
+        status: 'loading',
+        isOrigin: imageUrl.originOnly || false,
       });
     });
 
@@ -127,6 +132,57 @@ export default class ImageViewer extends React.Component<Props, State> {
     this.positionXNumber = this.width * (this.state.currentShowIndex || 0) * (I18nManager.isRTL ? 1 : -1);
     this.standardPositionX = this.positionXNumber;
     this.positionX.setValue(this.positionXNumber);
+  }
+
+  /**
+   * 显示原图
+   * @author phoobobo
+   */
+  public showOrigin = () => {
+    // if (!!this.props.onShowOrigin) {
+    //   this.props.onShowOrigin(this.state.currentShowIndex);
+    //   console.warn('override')
+    //   return;
+    // }
+    const index = this.state.currentShowIndex || 0;
+    if (!this!.state!.imageSizes![index]) {
+      return;
+    }
+    const imageSizes = this!.state!.imageSizes!.slice();
+    const imageStatus = { ...this!.state!.imageSizes![index] };
+
+    const saveImageSize = () => {
+      imageSizes[index] = imageStatus;
+      console.warn(imageStatus)
+      this.setState({ imageSizes });
+    }
+
+    imageStatus.isOrigin = true;
+    imageStatus.status = "loading";
+    saveImageSize();
+    
+    const image = this.props.imageUrls[index];
+    Image.getSize(
+      image.originUrl || '',
+      (width: number, height: number) => {
+        imageStatus.width = width;
+        imageStatus.height = height;
+        imageStatus.status = 'success';
+        saveImageSize();
+      },
+      () => {
+        try {
+          const data = (Image as any).resolveAssetSource(image.props.source);
+          imageStatus.width = data.width;
+          imageStatus.height = data.height;
+          imageStatus.status = 'success';
+          saveImageSize();
+        } catch (newError) {
+          // Give up..
+          imageStatus.status = 'fail';
+        }
+      }
+    );
   }
 
   /**
@@ -454,11 +510,20 @@ export default class ImageViewer extends React.Component<Props, State> {
         height *= widthPixel;
       }
 
+      let isLongImage = false;
       // 如果此时高度还大于屏幕高度,整体缩放到高度是屏幕高度
       if (height > screenHeight) {
-        const HeightPixel = screenHeight / height;
-        width *= HeightPixel;
-        height *= HeightPixel;
+        if (imageInfo.isOrigin) {
+          isLongImage = true;
+          // 仍然只缩放到宽度是屏幕宽度
+          const widthPixel = screenWidth / width;
+          width *= widthPixel;
+          height *= widthPixel;
+        } else {
+          const HeightPixel = screenHeight / height;
+          width *= HeightPixel;
+          height *= HeightPixel;
+        }  
       }
 
       const Wrapper = ({ children, ...others }: any) => (
@@ -520,8 +585,8 @@ export default class ImageViewer extends React.Component<Props, State> {
               image.props.source = {};
             }
             image.props.source = {
-              uri: image.url,
-              ...image.props.source
+              ...image.props.source,
+              uri: imageInfo.isOrigin && image.originUrl ? image.originUrl : image.url,
             };
           }
           if (this.props.enablePreload){
@@ -531,8 +596,9 @@ export default class ImageViewer extends React.Component<Props, State> {
             <ImageZoom
               key={index}
               ref={el => (this.imageRefs[index] = el)}
-              cropWidth={this.width}
-              cropHeight={this.height}
+              style={{ justifyContent: isLongImage ? 'flex-start' : 'center'}}
+              cropWidth={screenWidth}
+              cropHeight={screenHeight}
               maxOverflow={this.props.maxOverflow}
               horizontalOuterRangeOffset={this.handleHorizontalOuterRangeOffset}
               responderRelease={this.handleResponderRelease}
@@ -541,6 +607,7 @@ export default class ImageViewer extends React.Component<Props, State> {
               onDoubleClick={this.handleDoubleClick}
               imageWidth={width}
               imageHeight={height}
+              enableCenterFocus={isLongImage ? false : true}
               enableSwipeDown={this.props.enableSwipeDown}
               swipeDownThreshold={this.props.swipeDownThreshold}
               onSwipeDown={this.handleSwipeDown}
@@ -603,16 +670,13 @@ export default class ImageViewer extends React.Component<Props, State> {
           {this!.props!.renderIndicator!((this.state.currentShowIndex || 0) + 1, this.props.imageUrls.length)}
 
           {this.props.imageUrls[this.state.currentShowIndex || 0] &&
-            this.props.imageUrls[this.state.currentShowIndex || 0].originSizeKb &&
+            this.state.imageSizes &&
+            !this.state.imageSizes[this.state.currentShowIndex || 0].isOrigin &&
             this.props.imageUrls[this.state.currentShowIndex || 0].originUrl && (
               <View style={this.styles.watchOrigin}>
                 <TouchableOpacity 
                   style={this.styles.watchOriginTouchable}
-                  onPress={() => {
-                    if (this.props.onShowOrigin) {
-                      this.props.onShowOrigin(this.state.currentShowIndex)
-                    }
-                  }}
+                  onPress={this.showOrigin}
                 >
                   <Text style={this.styles.watchOriginText}>查看原图</Text>
                 </TouchableOpacity>
