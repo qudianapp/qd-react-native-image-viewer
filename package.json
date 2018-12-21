@@ -1,6 +1,6 @@
 {
   "name": "@qudian_mobile/qd-react-native-image-viewer",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "react native image viewer,大图浏览",
   "main": "built/index.js",
   "types": "built/index.d.ts",
