@@ -60,6 +60,17 @@ export class Props {
 
   public style?: ViewStyle = {};
 
+  public menuContainerStyle?: ViewStyle = {};
+
+  public saveBtnStyle?: ViewStyle = {};
+
+  public operateContainer?: ViewStyle = {};
+
+  /**
+   * 保存icon
+   */
+  public saveIconSource?: any;
+
   /**
    * Enable swipe down to close image viewer.
    * When swipe down, will trigger onCancel.
@@ -89,6 +100,13 @@ export class Props {
   public onLongPress?: (image?: IImageInfo) => void = () => {
     //
   };
+
+  /**
+   * 菜单收起
+   */
+  public onLeaveMenu?: () => void = () => {
+    //
+  }
 
   /**
    * 单击回调

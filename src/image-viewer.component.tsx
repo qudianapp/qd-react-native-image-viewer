@@ -704,22 +704,39 @@ export default class ImageViewer extends React.Component<Props, State> {
     this.setState({ isShowMenu: false });
   };
 
+  public getSaveBtn() {
+    if (!this.props.saveIconSource) {
+      return <View />;
+    }
+    return (
+      <TouchableOpacity
+        style={{ position: 'absolute', bottom: 40, right: 20, ...this.props.saveBtnStyle }}
+        onPress={this.saveToLocal}
+      >
+        <Image
+            source={this.props.saveIconSource}
+            style={{ width: 24, height: 24 }}
+        />
+      </TouchableOpacity>
+    )
+  }
+
   public getMenu() {
     if (!this.state.isShowMenu) {
       return null;
     }
 
     return (
-      <View style={this.styles.menuContainer}>
+      <View style={[this.styles.menuContainer, this.props.menuContainerStyle]}>
         <View style={this.styles.menuShadow} />
         <View style={this.styles.menuContent}>
-          <TouchableHighlight underlayColor="#F2F2F2" onPress={this.saveToLocal} style={this.styles.operateContainer}>
+          <TouchableHighlight underlayColor="#F2F2F2" onPress={this.saveToLocal} style={[this.styles.operateContainer, this.props.operateContainer]}>
             <Text style={this.styles.operateText}>{this.props.menuContext.saveToLocal}</Text>
           </TouchableHighlight>
           <TouchableHighlight
             underlayColor="#F2F2F2"
             onPress={this.handleLeaveMenu}
-            style={this.styles.operateContainer}
+            style={[this.styles.operateContainer, this.props.operateContainer]}
           >
             <Text style={this.styles.operateText}>{this.props.menuContext.cancel}</Text>
           </TouchableHighlight>
@@ -729,6 +746,9 @@ export default class ImageViewer extends React.Component<Props, State> {
   }
 
   public handleLeaveMenu = () => {
+    if (this.props.onLeaveMenu) {
+      this.props.onLeaveMenu();
+    }
     this.setState({ isShowMenu: false });
   };
 
@@ -745,6 +765,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     childs = (
       <View>
         {this.getContent()}
+        {/* {this.getSaveBtn()} */}
         {this.getMenu()}
       </View>
     );

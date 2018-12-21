@@ -40,7 +40,7 @@ export default (
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'white',
-      height: 40,
+      height: 60,
       borderBottomColor: '#ccc',
       borderBottomWidth: 1
     },
