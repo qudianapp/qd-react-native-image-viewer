@@ -700,7 +700,9 @@ export default class ImageViewer extends React.Component<Props, State> {
     } else {
       this.props.onSave(this.props.imageUrls[this.state.currentShowIndex || 0].url);
     }
-
+    if (this.props.onLeaveMenu) {
+      this.props.onLeaveMenu();
+    }
     this.setState({ isShowMenu: false });
   };
 
